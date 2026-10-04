@@ -1,0 +1,33 @@
+{% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination justify-content-center gap-1">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link btn-vtx-outline py-2 px-3" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if price_min %}&price_min={{ price_min }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" aria-label="Previous">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for p in page_obj.paginator.page_range %}
+                {% if page_obj.number == p %}
+                    <li class="page-item active">
+                        <span class="page-link btn-vtx-primary py-2 px-3 fw-bold">{{ p }}</span>
+                    </li>
+                {% elif p > page_obj.number|add:'-3' and p < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link btn-vtx-outline py-2 px-3" href="?page={{ p }}{% if q %}&q={{ q }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if price_min %}&price_min={{ price_min }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link btn-vtx-outline py-2 px-3" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if price_min %}&price_min={{ price_min }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" aria-label="Next">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

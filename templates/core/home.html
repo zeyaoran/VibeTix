@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}VibeTix — Live Concert Ticketing Platform{% endblock %}
+
+{% block content %}
+<!-- Section A: Editorial Hero Spotlight -->
+<section class="position-relative overflow-hidden py-5 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background: radial-gradient(circle at 80% 20%, rgba(244, 63, 94, 0.08), transparent 60%);">
+    <div class="container py-lg-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="d-inline-flex align-items-center gap-2 mb-3">
+                    <span class="subheading text-white">
+                        <span class="vtx-brand-dot me-1"></span> Featured World Tour
+                    </span>
+                </div>
+
+                {% if hero_event %}
+                    <h1 class="editorial-title-lg mb-4">
+                        {{ hero_event.title }}
+                    </h1>
+                    
+                    <div class="d-flex flex-wrap align-items-center gap-4 text-secondary mb-4 pb-2">
+                        <div>
+                            <i class="bi bi-calendar3 text-white me-2"></i>
+                            <span class="text-white fw-semibold">{{ hero_event.start_time|date:"l, d F Y" }}</span>
+                        </div>
+                        <div>
+                            <i class="bi bi-geo-alt text-white me-2"></i>
+                            <span class="text-white fw-semibold">{{ hero_event.venue.name }}, {{ hero_event.venue.city }}</span>
+                        </div>
+                        <div>
+                            <i class="bi bi-shield-check text-success me-1"></i> Official Verified
+                        </div>
+                    </div>
+
+                    <p class="text-secondary mb-4 pe-lg-5" style="max-width: 600px; font-size: 1.05rem;">
+                        {{ hero_event.description|truncatewords:30 }}
+                    </p>
+
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <a href="{% url 'events:detail' slug=hero_event.slug %}" class="btn btn-vtx-accent px-4 py-2">
+                            Select Tickets <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                        {% if hero_event.video_url %}
+                            <a href="#video-experience" class="btn btn-vtx-outline px-4 py-2">
+                                <i class="bi bi-play-circle me-2"></i> Watch Teaser
+                            </a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <h1 class="editorial-title-lg mb-4">
+                        The Live Music Season Has Arrived.
+                    </h1>
+                    <p class="text-secondary mb-4" style="max-width: 580px;">
+                        Explore world-class stadium tours, intimate acoustic showcases, and high-energy music festivals.
+                    </p>
+                    <a href="{% url 'events:list' %}" class="btn btn-vtx-primary px-4 py-2">Explore All Events</a>
+                {% endif %}
+            </div>
+
+            <!-- Hero Image Banner / Visual Display -->
+            <div class="col-lg-5">
+                {% if hero_event %}
+                    <div class="position-relative" style="border-radius: var(--radius-md); overflow: hidden; border: var(--vtx-border-subtle); box-shadow: var(--vtx-shadow-lg);">
+                        <div style="aspect-ratio: 4 / 3; background: #07090d;">
+                            {% if hero_event.banner_image %}
+                                <img src="{{ hero_event.banner_image.url }}" alt="{{ hero_event.title }}" class="w-100 h-100 object-fit-cover">
+                            {% elif hero_event.thumbnail_image %}
+                                <img src="{{ hero_event.thumbnail_image.url }}" alt="{{ hero_event.title }}" class="w-100 h-100 object-fit-cover">
+                            {% else %}
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-secondary p-4 text-center">
+                                    <i class="bi bi-soundwave fs-1 mb-2 opacity-50"></i>
+                                    <div class="editorial-heading fs-4">{{ hero_event.title }}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="position-absolute bottom-0 start-0 end-0 p-4" style="background: linear-gradient(to top, rgba(9,10,13,0.95) 10%, transparent 100%);">
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div>
+                                    <span class="subheading" style="color: var(--vtx-accent);">Capacity</span>
+                                    <div class="fw-bold text-white fs-5">{{ hero_event.venue.capacity|default:"75,000" }} Seats</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="subheading text-secondary">Starting At</span>
+                                    <div class="fw-bold text-white fs-5">
+                                        {% with hero_event.ticket_categories.all|dictsort:"price"|first as lowest %}
+                                            {% if lowest %}Rp {{ lowest.price|floatformat:"0" }}{% else %}TBA{% endif %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section B: Live Event Discovery Search Bar -->
+<section class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container">
+        <form action="{% url 'events:list' %}" method="get" class="row g-2 align-items-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="input-group vtx-input-group">
+                    <span class="input-group-text bg-transparent border-0 text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control bg-transparent border-0 shadow-none text-white" placeholder="Search concert tour, artist, or title..." aria-label="Search">
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-6">
+                <select name="city" class="form-select vtx-input-group shadow-none" aria-label="Filter city">
+                    <option value="">All Cities (Jakarta, Tangerang...)</option>
+                    <option value="Jakarta Pusat">Jakarta Pusat</option>
+                    <option value="Jakarta Utara">Jakarta Utara</option>
+                    <option value="Tangerang">Tangerang (BSD)</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <select name="date" class="form-select vtx-input-group shadow-none" aria-label="Filter date">
+                    <option value="">All Dates</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="this_month">Next 30 Days</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-12">
+                <button type="submit" class="btn btn-vtx-primary w-100 py-2">
+                    Find Tickets
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Section C: Upcoming Events Grid -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+            <div>
+                <div class="subheading mb-1 text-white">Live On Stage</div>
+                <h2 class="editorial-title-md mb-0">Upcoming Concerts</h2>
+            </div>
+            <a href="{% url 'events:list' %}" class="btn btn-vtx-outline py-2 px-3 align-self-start align-self-md-auto">
+                View All Concerts <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        {% if upcoming_events %}
+            <div class="row g-4">
+                {% for event in upcoming_events %}
+                    <div class="col-lg-4 col-md-6">
+                        {% include 'components/event_card.html' with event=event %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            {% include 'components/empty_state.html' with title="No Upcoming Concerts" message="Check back shortly for newly announced stadium tours." %}
+        {% endif %}
+    </div>
+</section>
+
+<!-- Section D: Featured Events Spotlight (Asymmetrical Editorial Row) -->
+{% if featured_events %}
+<section class="py-5 border-top border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="subheading mb-1" style="color: var(--vtx-accent);">Curated Selection</div>
+                <h2 class="editorial-title-md mb-0">Featured Highlights</h2>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for event in featured_events %}
+                <div class="col-lg-6">
+                    <div class="vtx-event-card flex-md-row h-100">
+                        <div class="card-media col-md-5" style="aspect-ratio: auto; min-height: 200px;">
+                            {% if event.thumbnail_image %}
+                                <img src="{{ event.thumbnail_image.url }}" alt="{{ event.title }}">
+                            {% elif event.banner_image %}
+                                <img src="{{ event.banner_image.url }}" alt="{{ event.title }}">
+                            {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary" style="background: #0d1017;">
+                                    <i class="bi bi-soundwave fs-1 opacity-25"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-body-content col-md-7">
+                            <div class="card-date-tag">
+                                {{ event.start_time|date:"D, d M Y" }}
+                            </div>
+                            <h4 class="card-title">
+                                <a href="{% url 'events:detail' slug=event.slug %}">{{ event.title }}</a>
+                            </h4>
+                            <div class="card-venue small mb-3">
+                                <i class="bi bi-geo-alt me-1"></i> {{ event.venue.name }}
+                            </div>
+                            <div class="card-footer-info">
+                                <div>
+                                    <div class="vtx-price-label">Tier From</div>
+                                    <div class="vtx-price-val">
+                                        {% with event.ticket_categories.all|dictsort:"price"|first as lowest %}
+                                            {% if lowest %}Rp {{ lowest.price|floatformat:"0" }}{% else %}TBA{% endif %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                                <a href="{% url 'events:detail' slug=event.slug %}" class="btn btn-vtx-accent py-1 px-3" style="font-size: 0.78rem;">
+                                    Tickets
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Section E: Performing Artists Grid -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="subheading mb-1 text-white">Lineup Roster</div>
+                <h2 class="editorial-title-md mb-0">Performing Artists</h2>
+            </div>
+            <a href="{% url 'events:artist_list' %}" class="btn btn-vtx-outline py-2 px-3">
+                All Artists <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4 row-cols-2 row-cols-md-4">
+            {% for artist in artists %}
+                <div class="col">
+                    {% include 'components/artist_card.html' with artist=artist %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Section F & G: Interactive Calendar Teaser & Video Showcase -->
+<section id="video-experience" class="py-5 border-top" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container py-3">
+        <div class="row g-5">
+            <!-- Video Experience Section -->
+            <div class="col-lg-7">
+                <div class="subheading mb-1" style="color: var(--vtx-accent);">Immersive Experience</div>
+                <h2 class="editorial-title-md mb-3">Live Stage Teaser</h2>
+                <p class="text-secondary small mb-4">
+                    Get a front-row sneak peek of high-definition stage visuals, lighting, and live performance trailers.
+                </p>
+
+                {% if video_event and video_event.youtube_embed_url %}
+                    <div class="vtx-video-container mb-3 shadow-lg">
+                        <iframe 
+                            src="{{ video_event.youtube_embed_url }}" 
+                            title="{{ video_event.title }} Live Teaser" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="small fw-semibold text-white">
+                            <i class="bi bi-camera-video me-1 text-danger"></i> {{ video_event.title }}
+                        </div>
+                        <a href="{% url 'events:detail' slug=video_event.slug %}" class="btn-vtx-ghost small py-1 px-2">
+                            View Event <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="vtx-empty-state p-4">
+                        <i class="bi bi-film fs-2 text-secondary mb-2 d-block"></i>
+                        <h6 class="fw-bold">Experience Trailer Coming Soon</h6>
+                        <p class="text-secondary small mb-0">Tour promo reels will be published alongside official lineup schedules.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Calendar Preview Agenda -->
+            <div class="col-lg-5">
+                <div class="subheading mb-1 text-white">Upcoming Agenda</div>
+                <h2 class="editorial-title-md mb-3">Concert Dates</h2>
+                <p class="text-secondary small mb-4">
+                    Plan ahead for confirmed tour dates across Indonesia's greatest concert arenas.
+                </p>
+
+                <div class="d-flex flex-column gap-3 mb-4">
+                    {% for event in calendar_preview_events %}
+                        <div class="p-3 d-flex align-items-center justify-content-between" style="background-color: var(--vtx-surface-elevated); border: var(--vtx-border-hairline); border-radius: var(--radius-xs);">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-center px-2 py-1 rounded" style="background-color: rgba(255,255,255,0.06); min-width: 50px;">
+                                    <div class="text-danger fw-bold" style="font-size: 0.72rem; text-transform: uppercase;">{{ event.start_time|date:"M" }}</div>
+                                    <div class="fs-5 fw-bold text-white">{{ event.start_time|date:"d" }}</div>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-white font-sans" style="font-size: 0.92rem;">
+                                        <a href="{% url 'events:detail' slug=event.slug %}">{{ event.title|truncatechars:36 }}</a>
+                                    </h6>
+                                    <div class="text-secondary small" style="font-size: 0.78rem;">
+                                        <i class="bi bi-geo-alt me-1"></i> {{ event.venue.city }} · {{ event.start_time|date:"H:i" }} WIB
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{% url 'events:detail' slug=event.slug %}" class="btn-vtx-ghost px-2" aria-label="Go to event">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </div>
+                    {% empty %}
+                        <div class="text-secondary small">No upcoming dates scheduled.</div>
+                    {% endfor %}
+                </div>
+
+                <a href="{% url 'core:calendar' %}" class="btn btn-vtx-outline w-100 py-2">
+                    Open Full Concert Calendar <i class="bi bi-calendar3 ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

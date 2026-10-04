@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Concert Venues & Arenas — VibeTix{% endblock %}
+
+{% block content %}
+<div class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="subheading mb-1 text-white">Partner Locations</div>
+                <h1 class="editorial-title-md mb-0">Stadiums & Concert Halls</h1>
+            </div>
+            <div class="text-secondary small font-sans">
+                <strong>{{ total_count }}</strong> verified venues
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Venue Filters -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-6">
+            <form method="get" action="{% url 'events:venue_list' %}">
+                {% if city_filter %}<input type="hidden" name="city" value="{{ city_filter }}">{% endif %}
+                <div class="input-group vtx-input-group">
+                    <span class="input-group-text bg-transparent border-0 text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" value="{{ q }}" class="form-control bg-transparent border-0 shadow-none text-white py-2" placeholder="Search venue by name, address, or city..." aria-label="Search Venues">
+                    <button type="submit" class="btn btn-vtx-primary px-4">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <form method="get" action="{% url 'events:venue_list' %}" id="city-form">
+                {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+                <select name="city" class="form-select vtx-input-group shadow-none" onchange="document.getElementById('city-form').submit();">
+                    <option value="">All Cities</option>
+                    {% for c in cities %}
+                        <option value="{{ c }}" {% if city_filter == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+
+    {% if venues %}
+        <div class="row g-4">
+            {% for venue in venues %}
+                <div class="col-md-6 col-lg-4">
+                    {% include 'components/venue_card.html' with venue=venue %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    {% else %}
+        {% include 'components/empty_state.html' with icon="bi bi-building-slash" title="No Venues Found" message="Try searching for a different venue name or selecting all locations." action_url="/venues/" action_text="View All Venues" %}
+    {% endif %}
+</div>
+{% endblock %}

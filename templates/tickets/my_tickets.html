@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Tickets — VibeTix{% endblock %}
+
+{% block content %}
+<div class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="subheading mb-1 text-white">Digital Ticket Wallet</div>
+                <h1 class="editorial-title-md mb-0">My Tickets</h1>
+            </div>
+            <div class="text-secondary small font-sans">
+                <strong>{{ total_count }}</strong> verified concert passes
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Ticket Search & Status Filter -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-6">
+            <form method="get" action="{% url 'tickets:my_tickets' %}">
+                {% if status_filter %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+                <div class="input-group vtx-input-group">
+                    <span class="input-group-text bg-transparent border-0 text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" value="{{ q }}" class="form-control bg-transparent border-0 shadow-none text-white py-2" placeholder="Search by ticket code, event, or holder name..." aria-label="Search Tickets">
+                    <button type="submit" class="btn btn-vtx-primary px-4">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <form method="get" action="{% url 'tickets:my_tickets' %}" id="status-form">
+                {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+                <select name="status" class="form-select vtx-input-group shadow-none" onchange="document.getElementById('status-form').submit();">
+                    <option value="">All Statuses</option>
+                    <option value="ISSUED" {% if status_filter == 'ISSUED' %}selected{% endif %}>Issued / Active</option>
+                    <option value="CHECKED_IN" {% if status_filter == 'CHECKED_IN' %}selected{% endif %}>Checked In</option>
+                    <option value="CANCELLED" {% if status_filter == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                    <option value="REFUNDED" {% if status_filter == 'REFUNDED' %}selected{% endif %}>Refunded</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    {% if tickets %}
+        <div class="row g-4">
+            {% for ticket in tickets %}
+                <div class="col-lg-6">
+                    <div class="vtx-ticket-stub">
+                        <!-- Header -->
+                        <div class="vtx-ticket-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="subheading" style="color: var(--vtx-accent); font-size: 0.68rem;">
+                                    {{ ticket.ticket_code }}
+                                </span>
+                                <div class="fw-bold text-white small font-sans mt-1">
+                                    {{ ticket.category.name }}
+                                </div>
+                            </div>
+                            <div>
+                                {% if ticket.status == 'ISSUED' %}
+                                    <span class="badge-status badge-status-on-sale"><i class="bi bi-check-circle-fill me-1"></i> Issued</span>
+                                {% elif ticket.status == 'CHECKED_IN' %}
+                                    <span class="badge-status badge-status-published"><i class="bi bi-qr-code-scan me-1"></i> Checked In</span>
+                                {% else %}
+                                    <span class="badge-status badge-status-sold-out">{{ ticket.get_status_display }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="vtx-ticket-body">
+                            <h4 class="editorial-heading fs-5 mb-2">
+                                <a href="{% url 'events:detail' slug=ticket.category.event.slug %}">
+                                    {{ ticket.category.event.title }}
+                                </a>
+                            </h4>
+
+                            <div class="row g-2 mb-3 text-secondary small font-sans">
+                                <div class="col-sm-6">
+                                    <i class="bi bi-calendar3 text-white me-1"></i> {{ ticket.category.event.start_time|date:"D, d M Y" }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <i class="bi bi-clock text-white me-1"></i> {{ ticket.category.event.start_time|date:"H:i" }} WIB
+                                </div>
+                                <div class="col-12">
+                                    <i class="bi bi-geo-alt text-white me-1"></i> {{ ticket.category.event.venue.name }}, {{ ticket.category.event.venue.city }}
+                                </div>
+                            </div>
+
+                            <div class="p-2 mb-3 rounded" style="background-color: var(--vtx-surface-elevated); border: var(--vtx-border-hairline);">
+                                <div class="d-flex justify-content-between align-items-center small font-sans">
+                                    <div>
+                                        <span class="text-secondary">Holder:</span>
+                                        <strong class="text-white ms-1">{{ ticket.holder_name }}</strong>
+                                    </div>
+                                    <div>
+                                        <span class="text-secondary">Order Ref:</span>
+                                        <a href="{% url 'orders:detail' order_number=ticket.order_item.order.order_number %}" class="text-white text-decoration-underline ms-1">
+                                            {{ ticket.order_item.order.order_number }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
+                                <span class="text-secondary small font-sans">100% Promoter Verified</span>
+                                <a href="{% url 'tickets:detail' ticket_code=ticket.ticket_code %}" class="btn btn-vtx-outline py-1 px-3 small">
+                                    View Digital Pass <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    {% else %}
+        {% include 'components/empty_state.html' with icon="bi bi-ticket-perforated" title="No Tickets In Your Wallet" message="You have not purchased tickets to upcoming concerts yet. Explore the live event calendar to get passes." action_url="/events/" action_text="Explore Concerts" %}
+    {% endif %}
+</div>
+{% endblock %}

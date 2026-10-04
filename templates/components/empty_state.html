@@ -1,0 +1,14 @@
+<div class="vtx-empty-state">
+    <div class="mb-3 text-secondary">
+        <i class="{{ icon|default:'bi bi-music-note-list' }} fs-1 opacity-50"></i>
+    </div>
+    <h4 class="fw-bold mb-2">{{ title|default:'No Records Found' }}</h4>
+    <p class="text-secondary small mb-4 mx-auto" style="max-width: 480px;">
+        {{ message|default:'We could not find anything matching your request.' }}
+    </p>
+    {% if action_url and action_text %}
+        <a href="{{ action_url }}" class="btn btn-vtx-outline px-4">
+            {{ action_text }}
+        </a>
+    {% endif %}
+</div>

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Log In — VibeTix{% endblock %}
+
+{% block content %}
+<div class="container py-5 my-md-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="p-4 p-md-5" style="background-color: var(--vtx-surface); border: var(--vtx-border-subtle); border-radius: var(--radius-sm); box-shadow: var(--vtx-shadow-md);">
+                <div class="text-center mb-4">
+                    <a class="vtx-brand mb-2 d-inline-block text-white" href="{% url 'core:home' %}">
+                        <span>VIBETIX<span class="vtx-brand-dot"></span></span>
+                    </a>
+                    <h2 class="editorial-heading fs-3 mb-1">Welcome Back</h2>
+                    <p class="text-secondary small">Sign in to manage your tickets, orders, and wishlist.</p>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 px-3 small mb-4" style="background-color: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5;">
+                        {% for error in form.non_field_errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i> {{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'accounts:login' %}{% if next %}?next={{ next }}{% endif %}">
+                    {% csrf_token %}
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Username or Email</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label for="{{ form.password.id_for_label }}" class="form-label mb-0">Password</label>
+                        </div>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-vtx-primary w-100 py-2 mb-3">
+                        Sign In <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="text-center pt-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
+                    <span class="text-secondary small">Don't have an account?</span>
+                    <a href="{% url 'accounts:register' %}" class="small text-white fw-bold ms-1 text-decoration-underline">
+                        Create Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

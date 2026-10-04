@@ -1,0 +1,31 @@
+<div class="vtx-venue-card">
+    <div class="card-media" style="aspect-ratio: 16 / 9; background: #0c0e14; position: relative; overflow: hidden;">
+        {% if venue.image %}
+            <img src="{{ venue.image.url }}" alt="{{ venue.name }}" class="w-100 h-100 object-fit-cover" loading="lazy">
+        {% else %}
+            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary">
+                <i class="bi bi-building fs-1 opacity-25"></i>
+            </div>
+        {% endif %}
+        <div class="position-absolute top-0 end-0 m-3">
+            <span class="badge-status" style="background: rgba(9,10,13,0.85); color: var(--vtx-gray-300); border: var(--vtx-border-hairline);">
+                <i class="bi bi-people me-1"></i> {{ venue.capacity|default:"TBA" }} Cap
+            </span>
+        </div>
+    </div>
+    <div class="p-3">
+        <div class="subheading text-secondary mb-1" style="font-size: 0.7rem;">{{ venue.city }}{% if venue.province %}, {{ venue.province }}{% endif %}</div>
+        <h5 class="fw-bold mb-2">
+            <a href="{% url 'events:venue_detail' slug=venue.slug %}">{{ venue.name }}</a>
+        </h5>
+        <p class="text-secondary small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            {{ venue.address }}
+        </p>
+        <div class="pt-2 border-top border-secondary d-flex justify-content-between align-items-center" style="border-color: rgba(255,255,255,0.08) !important;">
+            <span class="text-muted small">Official Partner Venue</span>
+            <a href="{% url 'events:venue_detail' slug=venue.slug %}" class="btn-vtx-ghost py-0 px-1 small">
+                Explore <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</div>

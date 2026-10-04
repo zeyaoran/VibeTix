@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ venue.name }} — Venue Guide & Upcoming Concerts — VibeTix{% endblock %}
+
+{% block content %}
+<div class="py-5 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container py-3">
+        <div class="row align-items-center g-5">
+            <div class="col-md-5 col-lg-4">
+                <div style="aspect-ratio: 16 / 10; border-radius: var(--radius-sm); overflow: hidden; border: var(--vtx-border-subtle); background: #0e121a;">
+                    {% if venue.image %}
+                        <img src="{{ venue.image.url }}" alt="{{ venue.name }}" class="w-100 h-100 object-fit-cover">
+                    {% else %}
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary">
+                            <i class="bi bi-building fs-1 opacity-25"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-7 col-lg-8">
+                <div class="subheading mb-2 text-white">
+                    <i class="bi bi-geo-alt me-1 text-danger"></i> {{ venue.city }}{% if venue.province %}, {{ venue.province }}{% endif %}
+                </div>
+                <h1 class="editorial-title-lg mb-3">{{ venue.name }}</h1>
+
+                <p class="text-secondary mb-4" style="max-width: 600px; font-size: 1rem;">
+                    {{ venue.address }}{% if venue.postal_code %}, {{ venue.postal_code }}{% endif %}
+                </p>
+
+                <div class="d-flex flex-wrap gap-4 text-secondary small">
+                    <div class="p-3 rounded" style="background: var(--vtx-surface-elevated); border: var(--vtx-border-hairline);">
+                        <div class="text-secondary uppercase font-sans mb-1" style="font-size: 0.72rem;">Maximum Capacity</div>
+                        <div class="fs-5 fw-bold text-white">{{ venue.capacity|default:"TBA" }} Seats</div>
+                    </div>
+                    {% if venue.latitude and venue.longitude %}
+                        <div class="p-3 rounded" style="background: var(--vtx-surface-elevated); border: var(--vtx-border-hairline);">
+                            <div class="text-secondary uppercase font-sans mb-1" style="font-size: 0.72rem;">GPS Coordinates</div>
+                            <div class="fs-6 fw-bold text-white">{{ venue.latitude }}, {{ venue.longitude }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <div class="subheading mb-1 text-white">Live at {{ venue.name }}</div>
+            <h2 class="editorial-title-md mb-0">Upcoming Concerts at this Venue</h2>
+        </div>
+    </div>
+
+    {% if upcoming_events %}
+        <div class="row g-4">
+            {% for event in upcoming_events %}
+                <div class="col-md-6 col-lg-4">
+                    {% include 'components/event_card.html' with event=event %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include 'components/empty_state.html' with icon="bi bi-calendar-x" title="No Upcoming Shows Scheduled" message="There are currently no scheduled concerts announced for this venue." action_url="/events/" action_text="Explore Other Concerts" %}
+    {% endif %}
+</div>
+{% endblock %}

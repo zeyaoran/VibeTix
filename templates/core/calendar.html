@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Concert Calendar — {{ month_name }} {{ year }} — VibeTix{% endblock %}
+
+{% block content %}
+<div class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="subheading mb-1 text-white">Live Concert Schedule</div>
+                <h1 class="editorial-title-md mb-0">Tour Date Calendar</h1>
+            </div>
+
+            <!-- Month & Year Selector Controls -->
+            <div class="d-flex align-items-center gap-3">
+                <a href="?month={{ prev_month }}&year={{ prev_year }}" class="btn btn-vtx-outline py-1 px-3 small">
+                    <i class="bi bi-chevron-left me-1"></i> Prev
+                </a>
+                <div class="fs-5 fw-bold text-white font-serif px-2">
+                    {{ month_name }} {{ year }}
+                </div>
+                <a href="?month={{ next_month }}&year={{ next_year }}" class="btn btn-vtx-outline py-1 px-3 small">
+                    Next <i class="bi bi-chevron-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Calendar Table Grid -->
+    <div class="p-3 mb-5" style="background-color: var(--vtx-surface); border: var(--vtx-border-hairline); border-radius: var(--radius-sm); overflow-x: auto;">
+        <table class="vtx-calendar-table">
+            <thead>
+                <tr>
+                    <th class="vtx-calendar-header-cell">Mon</th>
+                    <th class="vtx-calendar-header-cell">Tue</th>
+                    <th class="vtx-calendar-header-cell">Wed</th>
+                    <th class="vtx-calendar-header-cell">Thu</th>
+                    <th class="vtx-calendar-header-cell">Fri</th>
+                    <th class="vtx-calendar-header-cell">Sat</th>
+                    <th class="vtx-calendar-header-cell">Sun</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for week in calendar_grid %}
+                    <tr>
+                        {% for day_data in week %}
+                            {% if day_data.day == 0 %}
+                                <td class="vtx-calendar-day-cell empty"></td>
+                            {% else %}
+                                <td class="vtx-calendar-day-cell {% if day_data.is_today %}today{% endif %} {% if day_data.has_events %}has-events{% endif %}">
+                                    <div class="vtx-calendar-day-number">{{ day_data.day }}</div>
+                                    {% if day_data.events %}
+                                        {% for ev in day_data.events %}
+                                            <a href="{% url 'events:detail' slug=ev.slug %}" class="vtx-calendar-event-pill" title="{{ ev.title }} ({{ ev.venue.city }})">
+                                                {{ ev.title|truncatechars:20 }}
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Monthly Agenda List -->
+    <div class="mb-4">
+        <div class="subheading mb-1 text-white">Confirmed Schedule</div>
+        <h3 class="editorial-heading mb-4">Events Scheduled in {{ month_name }} {{ year }}</h3>
+
+        {% if month_events %}
+            <div class="row g-4">
+                {% for event in month_events %}
+                    <div class="col-md-6 col-lg-4">
+                        {% include 'components/event_card.html' with event=event %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            {% include 'components/empty_state.html' with icon="bi bi-calendar-event" title="No Concerts In This Month" message="There are no scheduled performances announced for this month yet. Try navigating to another month." action_url="/calendar/" action_text="Return to Current Month" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

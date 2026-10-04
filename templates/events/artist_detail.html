@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ artist.name }} — Concerts & Tour Dates — VibeTix{% endblock %}
+
+{% block content %}
+<div class="py-5 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background: radial-gradient(circle at 80% 20%, rgba(244,63,94,0.08), transparent 70%);">
+    <div class="container py-3">
+        <div class="row align-items-center g-5">
+            <div class="col-md-4 col-lg-3 text-center text-md-start">
+                <div style="aspect-ratio: 1 / 1; border-radius: var(--radius-sm); overflow: hidden; border: var(--vtx-border-subtle); box-shadow: var(--vtx-shadow-md); background: #11141c;">
+                    {% if artist.image %}
+                        <img src="{{ artist.image.url }}" alt="{{ artist.name }}" class="w-100 h-100 object-fit-cover">
+                    {% else %}
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary">
+                            <i class="bi bi-person-fill fs-1 opacity-25"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-8 col-lg-9">
+                <div class="subheading mb-2" style="color: var(--vtx-accent);">
+                    {{ artist.genre|default:"Artist Profile" }}
+                </div>
+                <h1 class="editorial-title-lg mb-3">{{ artist.name }}</h1>
+
+                {% if artist.bio %}
+                    <p class="text-secondary mb-4" style="max-width: 700px; font-size: 1.05rem; line-height: 1.7;">
+                        {{ artist.bio }}
+                    </p>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-3">
+                    {% if artist.spotify_url %}
+                        <a href="{{ artist.spotify_url }}" target="_blank" rel="noreferrer" class="btn btn-vtx-outline py-2 px-3 small">
+                            <i class="bi bi-spotify text-success me-2"></i> Listen on Spotify
+                        </a>
+                    {% endif %}
+                    {% if artist.instagram_handle %}
+                        <a href="https://instagram.com/{{ artist.instagram_handle }}" target="_blank" rel="noreferrer" class="btn btn-vtx-outline py-2 px-3 small">
+                            <i class="bi bi-instagram text-danger me-2"></i> @{{ artist.instagram_handle }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <div class="subheading mb-1 text-white">Confirmed Tour Dates</div>
+            <h2 class="editorial-title-md mb-0">Upcoming Shows Featuring {{ artist.name }}</h2>
+        </div>
+    </div>
+
+    {% if upcoming_events %}
+        <div class="row g-4">
+            {% for event in upcoming_events %}
+                <div class="col-md-6 col-lg-4">
+                    {% include 'components/event_card.html' with event=event %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include 'components/empty_state.html' with icon="bi bi-calendar-x" title="No Upcoming Dates Scheduled" message="There are currently no confirmed concert tours announced for this artist." action_url="/events/" action_text="Explore Other Concerts" %}
+    {% endif %}
+</div>
+{% endblock %}

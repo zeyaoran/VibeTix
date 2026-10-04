@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Performing Artists & Lineups — VibeTix{% endblock %}
+
+{% block content %}
+<div class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="subheading mb-1 text-white">Artists Roster</div>
+                <h1 class="editorial-title-md mb-0">Touring Artists</h1>
+            </div>
+            <div class="text-secondary small font-sans">
+                <strong>{{ total_count }}</strong> featured performers
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Artist Search -->
+    <form method="get" action="{% url 'events:artist_list' %}" class="mb-5" style="max-width: 500px;">
+        <div class="input-group vtx-input-group">
+            <span class="input-group-text bg-transparent border-0 text-secondary"><i class="bi bi-search"></i></span>
+            <input type="text" name="q" value="{{ q }}" class="form-control bg-transparent border-0 shadow-none text-white py-2" placeholder="Search artist by name or genre..." aria-label="Search Artists">
+            <button type="submit" class="btn btn-vtx-primary px-4">Search</button>
+        </div>
+    </form>
+
+    {% if artists %}
+        <div class="row g-4 row-cols-2 row-cols-md-3 row-cols-lg-4">
+            {% for artist in artists %}
+                <div class="col">
+                    {% include 'components/artist_card.html' with artist=artist %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    {% else %}
+        {% include 'components/empty_state.html' with icon="bi bi-person-x" title="No Artists Found" message="Try searching for a different artist name or genre." action_url="/artists/" action_text="View All Artists" %}
+    {% endif %}
+</div>
+{% endblock %}

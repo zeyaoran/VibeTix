@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Saved Events — VibeTix{% endblock %}
+
+{% block content %}
+<div class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important; background-color: var(--vtx-surface);">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="subheading mb-1 text-white">Curated Collection</div>
+                <h1 class="editorial-title-md mb-0">Saved Wishlist</h1>
+            </div>
+            <div class="text-secondary small font-sans">
+                <strong>{{ total_count }}</strong> saved concerts
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    {% if wishlists %}
+        <div class="row g-4">
+            {% for item in wishlists %}
+                <div class="col-md-6 col-lg-4">
+                    {% include 'components/event_card.html' with event=item.event %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include 'components/empty_state.html' with icon="bi bi-heart" title="Your Wishlist is Empty" message="Save your favorite upcoming concerts and world tours to track tickets and presale releases." action_url="/events/" action_text="Explore Upcoming Concerts" %}
+    {% endif %}
+</div>
+{% endblock %}

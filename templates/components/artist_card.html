@@ -1,0 +1,17 @@
+<div class="vtx-artist-card">
+    <div class="vtx-artist-media">
+        {% if artist.image %}
+            <img src="{{ artist.image.url }}" alt="{{ artist.name }}" loading="lazy">
+        {% else %}
+            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary" style="background: #11141c;">
+                <i class="bi bi-person-fill fs-1 opacity-25"></i>
+            </div>
+        {% endif %}
+    </div>
+    <div class="p-3 text-center">
+        <h5 class="fw-bold mb-1">
+            <a href="{% url 'events:artist_detail' slug=artist.slug %}">{{ artist.name }}</a>
+        </h5>
+        <div class="text-secondary small font-sans">{{ artist.genre|default:"Artist" }}</div>
+    </div>
+</div>

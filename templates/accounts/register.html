@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register Account — VibeTix{% endblock %}
+
+{% block content %}
+<div class="container py-5 my-md-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="p-4 p-md-5" style="background-color: var(--vtx-surface); border: var(--vtx-border-subtle); border-radius: var(--radius-sm); box-shadow: var(--vtx-shadow-md);">
+                <div class="text-center mb-4">
+                    <a class="vtx-brand mb-2 d-inline-block text-white" href="{% url 'core:home' %}">
+                        <span>VIBETIX<span class="vtx-brand-dot"></span></span>
+                    </a>
+                    <h2 class="editorial-heading fs-3 mb-1">Create Your Account</h2>
+                    <p class="text-secondary small">Join the live music ticketing platform for verified access.</p>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 px-3 small mb-4" style="background-color: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5;">
+                        {% for error in form.non_field_errors %}
+                            <div><i class="bi bi-exclamation-circle me-1"></i> {{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'accounts:register' %}">
+                    {% csrf_token %}
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name *</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Username *</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                        <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">
+                            Letters, digits, and @/./+/-/_ only.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email Address *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number (Optional)</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="text-danger small mt-1">{{ form.phone_number.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">Password *</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
+                        {% endif %}
+                        <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">
+                            Minimum 8 characters. Cannot be entirely numeric.
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password *</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-vtx-primary w-100 py-2 mb-3">
+                        Register Account <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="text-center pt-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
+                    <span class="text-secondary small">Already have an account?</span>
+                    <a href="{% url 'accounts:login' %}" class="small text-white fw-bold ms-1 text-decoration-underline">
+                        Log In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

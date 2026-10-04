@@ -1,0 +1,789 @@
+/* ==========================================================================
+   VibeTix — Fullstack Concert Ticketing Platform
+   Aesthetic: CLEAN PREMIUM TICKETING × EDITORIAL CONCERT AESTHETIC
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  /* Editorial Palette: Deep Charcoal / Monochromatic Foundation + Restrained Accent */
+  --vtx-bg: #090a0d;
+  --vtx-surface: #10131a;
+  --vtx-surface-elevated: #161b24;
+  --vtx-surface-hover: #1e2430;
+  
+  --vtx-white: #ffffff;
+  --vtx-offwhite: #f8fafc;
+  --vtx-gray-100: #f1f5f9;
+  --vtx-gray-200: #e2e8f0;
+  --vtx-gray-300: #cbd5e1;
+  --vtx-gray-400: #94a3b8;
+  --vtx-gray-500: #64748b;
+  --vtx-gray-600: #475569;
+  --vtx-gray-700: #334155;
+  --vtx-gray-800: #1e293b;
+  --vtx-gray-900: #0f172a;
+
+  /* Restrained Accent: Crimson & Warm Amber */
+  --vtx-accent: #f43f5e;
+  --vtx-accent-hover: #e11d48;
+  --vtx-accent-subtle: rgba(244, 63, 94, 0.12);
+  --vtx-accent-border: rgba(244, 63, 94, 0.28);
+  
+  --vtx-gold: #d97706;
+  --vtx-gold-subtle: rgba(217, 119, 6, 0.12);
+
+  /* Status Tokens */
+  --vtx-success: #10b981;
+  --vtx-success-subtle: rgba(16, 185, 129, 0.12);
+  --vtx-warning: #f59e0b;
+  --vtx-danger: #ef4444;
+  --vtx-info: #0284c7;
+
+  /* Typography */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Syne', 'Plus Jakarta Sans', sans-serif;
+
+  /* Borders & Dividers */
+  --vtx-border-hairline: 1px solid rgba(255, 255, 255, 0.08);
+  --vtx-border-subtle: 1px solid rgba(255, 255, 255, 0.12);
+  --vtx-border-strong: 1px solid rgba(255, 255, 255, 0.22);
+
+  /* Shadows */
+  --vtx-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --vtx-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --vtx-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+
+  /* Restrained Geometry */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+/* Base Document */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--vtx-bg);
+  color: var(--vtx-gray-200);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Editorial Typography */
+.font-serif {
+  font-family: var(--font-serif) !important;
+}
+
+.font-sans {
+  font-family: var(--font-sans) !important;
+}
+
+.font-display {
+  font-family: var(--font-display) !important;
+}
+
+h1, h2, h3, h4, h5, h6, .editorial-heading {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--vtx-white);
+  letter-spacing: -0.015em;
+  margin-bottom: 0.5rem;
+}
+
+.subheading {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--vtx-gray-400);
+}
+
+.editorial-title-lg {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--vtx-white);
+}
+
+.editorial-title-md {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--vtx-white);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+a:hover {
+  color: var(--vtx-white);
+}
+
+/* Thin Editorial Dividers */
+.divider-hairline {
+  border-top: var(--vtx-border-hairline);
+  margin: 1.5rem 0;
+}
+
+/* Navigation */
+.vtx-navbar {
+  background-color: rgba(9, 10, 13, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: var(--vtx-border-hairline);
+  padding: 0.9rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  transition: all 0.25s ease;
+}
+
+.vtx-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vtx-white) !important;
+}
+
+.vtx-brand-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--vtx-accent);
+  display: inline-block;
+  margin-left: 2px;
+}
+
+.vtx-nav-link {
+  color: var(--vtx-gray-400) !important;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.45rem 0.85rem !important;
+  border-radius: var(--radius-xs);
+  transition: color 0.18s ease, background-color 0.18s ease;
+  position: relative;
+}
+
+.vtx-nav-link:hover, .vtx-nav-link.active {
+  color: var(--vtx-white) !important;
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.vtx-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0.85rem;
+  right: 0.85rem;
+  height: 2px;
+  background-color: var(--vtx-accent);
+}
+
+/* Notification & Wishlist Badges */
+.vtx-badge-count {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 9999px;
+  background-color: var(--vtx-accent);
+  color: var(--vtx-white);
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* Buttons */
+.btn-vtx-primary {
+  background-color: var(--vtx-white);
+  color: #000000;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--vtx-white);
+  border-radius: var(--radius-xs);
+  padding: 0.55rem 1.35rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-vtx-primary:hover {
+  background-color: #e2e8f0;
+  color: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+}
+
+.btn-vtx-accent {
+  background-color: var(--vtx-accent);
+  color: var(--vtx-white);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--vtx-accent);
+  border-radius: var(--radius-xs);
+  padding: 0.55rem 1.35rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-vtx-accent:hover {
+  background-color: var(--vtx-accent-hover);
+  color: var(--vtx-white);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+}
+
+.btn-vtx-outline {
+  background-color: transparent;
+  color: var(--vtx-white);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: var(--vtx-border-subtle);
+  border-radius: var(--radius-xs);
+  padding: 0.55rem 1.35rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-vtx-outline:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--vtx-white);
+  color: var(--vtx-white);
+}
+
+.btn-vtx-ghost {
+  background-color: transparent;
+  color: var(--vtx-gray-400);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius-xs);
+  padding: 0.45rem 0.8rem;
+  transition: color 0.18s ease;
+}
+
+.btn-vtx-ghost:hover {
+  color: var(--vtx-white);
+}
+
+/* Event Cards — Editorial Image-Focused */
+.vtx-event-card {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-hairline);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.vtx-event-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--vtx-border-strong);
+  box-shadow: var(--vtx-shadow-md);
+}
+
+.vtx-event-card .card-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background-color: #050608;
+  overflow: hidden;
+}
+
+.vtx-event-card .card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.vtx-event-card:hover .card-media img {
+  transform: scale(1.04);
+}
+
+.vtx-event-card .card-body-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.vtx-event-card .card-date-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vtx-accent);
+  margin-bottom: 0.35rem;
+}
+
+.vtx-event-card .card-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--vtx-white);
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vtx-event-card .card-venue {
+  font-size: 0.85rem;
+  color: var(--vtx-gray-400);
+  margin-bottom: 0.9rem;
+}
+
+.vtx-event-card .card-footer-info {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: var(--vtx-border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vtx-price-label {
+  font-size: 0.75rem;
+  color: var(--vtx-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vtx-price-val {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--vtx-white);
+}
+
+/* Wishlist Button Overlay */
+.btn-wishlist-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(9, 10, 13, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: var(--vtx-border-hairline);
+  color: var(--vtx-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.btn-wishlist-toggle:hover {
+  background: rgba(9, 10, 13, 0.95);
+  border-color: var(--vtx-accent);
+  color: var(--vtx-accent);
+}
+
+.btn-wishlist-toggle.active {
+  background: var(--vtx-accent);
+  border-color: var(--vtx-accent);
+  color: var(--vtx-white);
+}
+
+/* Status Badges */
+.badge-status {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-status-on-sale {
+  background-color: var(--vtx-success-subtle);
+  color: var(--vtx-success);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-status-published {
+  background-color: rgba(2, 132, 199, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+}
+
+.badge-status-sold-out {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Artist & Venue Cards */
+.vtx-artist-card {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-hairline);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: all 0.25s ease;
+  height: 100%;
+}
+
+.vtx-artist-card:hover {
+  border-color: var(--vtx-border-strong);
+  transform: translateY(-3px);
+}
+
+.vtx-artist-media {
+  aspect-ratio: 1 / 1;
+  background-color: #0a0c10;
+  overflow: hidden;
+  position: relative;
+}
+
+.vtx-artist-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.vtx-artist-card:hover .vtx-artist-media img {
+  transform: scale(1.05);
+}
+
+.vtx-venue-card {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-hairline);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: all 0.25s ease;
+  height: 100%;
+}
+
+.vtx-venue-card:hover {
+  border-color: var(--vtx-border-strong);
+  transform: translateY(-3px);
+}
+
+/* Forms & Inputs */
+.vtx-input-group {
+  background-color: var(--vtx-surface-elevated);
+  border: var(--vtx-border-subtle);
+  border-radius: var(--radius-xs);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vtx-input-group:focus-within {
+  border-color: var(--vtx-white);
+  box-shadow: 0 0 0 1px var(--vtx-white);
+}
+
+.form-control, .form-select {
+  background-color: var(--vtx-surface-elevated) !important;
+  border: var(--vtx-border-subtle) !important;
+  color: var(--vtx-white) !important;
+  border-radius: var(--radius-xs) !important;
+  font-size: 0.9rem;
+  padding: 0.65rem 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--vtx-white) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) !important;
+  outline: none;
+}
+
+.form-label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vtx-gray-400);
+  margin-bottom: 0.4rem;
+}
+
+/* Editorial Ticket Categories Matrix */
+.vtx-category-card {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.vtx-category-card:hover {
+  background-color: var(--vtx-surface-elevated);
+  border-color: var(--vtx-border-strong);
+}
+
+.vtx-category-card.sold-out {
+  opacity: 0.65;
+  background-color: rgba(9, 10, 13, 0.5);
+}
+
+/* Video Responsive Container */
+.vtx-video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: var(--vtx-border-subtle);
+  background-color: #000000;
+}
+
+.vtx-video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Calendar Grid */
+.vtx-calendar-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 6px;
+}
+
+.vtx-calendar-header-cell {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vtx-gray-500);
+  padding: 0.6rem 0;
+}
+
+.vtx-calendar-day-cell {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-hairline);
+  border-radius: var(--radius-xs);
+  height: 90px;
+  vertical-align: top;
+  padding: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.vtx-calendar-day-cell:hover {
+  background-color: var(--vtx-surface-elevated);
+  border-color: var(--vtx-border-strong);
+}
+
+.vtx-calendar-day-cell.empty {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.vtx-calendar-day-cell.today {
+  border-color: var(--vtx-accent);
+}
+
+.vtx-calendar-day-number {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--vtx-gray-400);
+}
+
+.vtx-calendar-day-cell.today .vtx-calendar-day-number {
+  color: var(--vtx-accent);
+}
+
+.vtx-calendar-event-pill {
+  font-size: 0.72rem;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-left: 2px solid var(--vtx-accent);
+  color: var(--vtx-white);
+  padding: 0.2rem 0.4rem;
+  border-radius: 2px;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  transition: background-color 0.15s ease;
+}
+
+.vtx-calendar-event-pill:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  color: var(--vtx-white);
+}
+
+/* Empty State Component */
+.vtx-empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  background-color: rgba(16, 19, 26, 0.4);
+}
+
+/* Notifications */
+.vtx-notification-item {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.vtx-notification-item.unread {
+  border-left: 3px solid var(--vtx-accent);
+  background-color: var(--vtx-surface-elevated);
+}
+
+/* Pass / Ticket Ticket Stub Foundation */
+.vtx-ticket-stub {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.vtx-ticket-header {
+  background-color: var(--vtx-surface-elevated);
+  padding: 1rem 1.25rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.vtx-ticket-body {
+  padding: 1.25rem;
+}
+
+/* Footer */
+.vtx-footer {
+  background-color: #060709;
+  border-top: var(--vtx-border-hairline);
+  margin-top: auto;
+  padding: 4.5rem 0 2rem 0;
+  color: var(--vtx-gray-400);
+}
+
+.vtx-footer-heading {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--vtx-white);
+  margin-bottom: 1.25rem;
+}
+
+.vtx-footer-link {
+  color: var(--vtx-gray-400);
+  font-size: 0.88rem;
+  display: block;
+  margin-bottom: 0.65rem;
+  transition: color 0.18s ease;
+}
+
+.vtx-footer-link:hover {
+  color: var(--vtx-white);
+}
+
+/* Toast Alerts */
+.alert-vtx {
+  background-color: var(--vtx-surface-elevated);
+  border: var(--vtx-border-subtle);
+  color: var(--vtx-white);
+  border-radius: var(--radius-xs);
+  padding: 0.85rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 991.98px) {
+  .vtx-calendar-day-cell {
+    height: 60px;
+    padding: 0.35rem;
+  }
+  .vtx-calendar-event-pill {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.25rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .editorial-title-lg {
+    font-size: 2.1rem;
+  }
+  .vtx-calendar-day-cell {
+    height: 48px;
+    padding: 0.2rem;
+  }
+  .vtx-calendar-event-pill {
+    display: none;
+  }
+  .vtx-calendar-day-cell.has-events::after {
+    content: '•';
+    color: var(--vtx-accent);
+    font-size: 1.2rem;
+    line-height: 1;
+    display: block;
+    text-align: center;
+  }
+}
