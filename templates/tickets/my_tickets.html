@@ -50,17 +50,17 @@
             {% for ticket in tickets %}
                 <div class="col-lg-6">
                     <div class="vtx-ticket-stub">
-                        <!-- Header -->
-                        <div class="vtx-ticket-header d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="subheading" style="color: var(--vtx-accent); font-size: 0.68rem;">
-                                    {{ ticket.ticket_code }}
-                                </span>
-                                <div class="fw-bold text-white small font-sans mt-1">
-                                    {{ ticket.category.name }}
-                                </div>
-                            </div>
-                            <div>
+                        <!-- Top Event Banner Snapshot -->
+                        <div class="position-relative" style="height: 120px; overflow: hidden; background-color: #0c0e14;">
+                            {% if ticket.category.event.thumbnail_image %}
+                                <img src="{{ ticket.category.event.thumbnail_image.url }}" alt="{{ ticket.category.event.title }}" class="w-100 h-100 object-fit-cover opacity-50">
+                            {% elif ticket.category.event.banner_image %}
+                                <img src="{{ ticket.category.event.banner_image.url }}" alt="{{ ticket.category.event.title }}" class="w-100 h-100 object-fit-cover opacity-50">
+                            {% else %}
+                                <div class="w-100 h-100" style="background: radial-gradient(circle, rgba(244,63,94,0.1), #090a0d 70%);"></div>
+                            {% endif %}
+                            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to top, var(--vtx-surface) 10%, transparent 80%);"></div>
+                            <div class="position-absolute top-0 end-0 p-3">
                                 {% if ticket.status == 'ISSUED' %}
                                     <span class="badge-status badge-status-on-sale"><i class="bi bi-check-circle-fill me-1"></i> Issued</span>
                                 {% elif ticket.status == 'CHECKED_IN' %}
@@ -71,9 +71,25 @@
                             </div>
                         </div>
 
+                        <!-- Ticket Header -->
+                        <div class="vtx-ticket-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="subheading text-secondary" style="font-size: 0.65rem;">OFFICIAL PASS</span>
+                                <div class="fw-bold text-white font-sans mt-0" style="font-size: 1.1rem;">
+                                    {{ ticket.category.name }}
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="subheading text-secondary" style="font-size: 0.65rem;">PASS CODE</span>
+                                <div class="fw-bold text-white font-monospace" style="font-size: 0.9rem; letter-spacing: 0.05em;">
+                                    {{ ticket.ticket_code }}
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Body -->
                         <div class="vtx-ticket-body">
-                            <h4 class="editorial-heading fs-5 mb-2">
+                            <h4 class="editorial-heading fs-5 mb-2 text-white">
                                 <a href="{% url 'events:detail' slug=ticket.category.event.slug %}">
                                     {{ ticket.category.event.title }}
                                 </a>
@@ -91,7 +107,7 @@
                                 </div>
                             </div>
 
-                            <div class="p-2 mb-3 rounded" style="background-color: var(--vtx-surface-elevated); border: var(--vtx-border-hairline);">
+                            <div class="p-3 mb-3 rounded" style="background-color: var(--vtx-surface-elevated); border: var(--vtx-border-hairline);">
                                 <div class="d-flex justify-content-between align-items-center small font-sans">
                                     <div>
                                         <span class="text-secondary">Holder:</span>
@@ -106,10 +122,13 @@
                                 </div>
                             </div>
 
+                            <!-- Barcode Visual -->
+                            <div class="vtx-barcode-lines mb-3"></div>
+
                             <div class="d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
                                 <span class="text-secondary small font-sans">100% Promoter Verified</span>
-                                <a href="{% url 'tickets:detail' ticket_code=ticket.ticket_code %}" class="btn btn-vtx-outline py-1 px-3 small">
-                                    View Digital Pass <i class="bi bi-arrow-right ms-1"></i>
+                                <a href="{% url 'tickets:detail' ticket_code=ticket.ticket_code %}" class="btn btn-vtx-primary py-1 px-3 small font-sans">
+                                    View Digital Pass &rarr;
                                 </a>
                             </div>
                         </div>

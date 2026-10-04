@@ -702,16 +702,161 @@ a:hover {
   border-radius: var(--radius-sm);
   overflow: hidden;
   position: relative;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.vtx-ticket-stub:hover {
+  border-color: var(--vtx-border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--vtx-shadow-md);
 }
 
 .vtx-ticket-header {
   background-color: var(--vtx-surface-elevated);
-  padding: 1rem 1.25rem;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+  position: relative;
 }
 
 .vtx-ticket-body {
-  padding: 1.25rem;
+  padding: 1.5rem;
+}
+
+/* Luxury Stepper Component [ - ] Qty [ + ] */
+.vtx-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--vtx-surface-elevated);
+  border: var(--vtx-border-subtle);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  height: 38px;
+}
+
+.vtx-qty-btn {
+  background: transparent;
+  border: none;
+  color: var(--vtx-gray-300);
+  width: 36px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.vtx-qty-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--vtx-white);
+}
+
+.vtx-qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.vtx-qty-input {
+  width: 44px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: var(--vtx-white);
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.vtx-qty-input::-webkit-outer-spin-button,
+.vtx-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Luxury Sticky Summary Card */
+.vtx-summary-card {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2rem;
+  box-shadow: var(--vtx-shadow-sm);
+}
+
+.vtx-grand-total-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.vtx-grand-total-val {
+  font-family: var(--font-sans);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--vtx-white);
+  letter-spacing: -0.02em;
+}
+
+/* Barcode Visual Element for Digital Pass */
+.vtx-barcode-lines {
+  height: 48px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ffffff 0px,
+    #ffffff 2px,
+    transparent 2px,
+    transparent 4px,
+    #ffffff 4px,
+    #ffffff 7px,
+    transparent 7px,
+    transparent 9px,
+    #ffffff 9px,
+    #ffffff 10px,
+    transparent 10px,
+    transparent 13px,
+    #ffffff 13px,
+    #ffffff 16px,
+    transparent 16px,
+    transparent 17px
+  );
+  opacity: 0.75;
+  border-radius: 2px;
+}
+
+/* Hybrid Scannable Order History Rows */
+.vtx-order-table-header {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vtx-gray-500);
+  padding: 0.75rem 1.25rem;
+  border-bottom: var(--vtx-border-hairline);
+}
+
+.vtx-order-row-item {
+  background-color: var(--vtx-surface);
+  border: var(--vtx-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.vtx-order-row-item:hover {
+  background-color: var(--vtx-surface-elevated);
+  border-color: var(--vtx-border-subtle);
+  transform: translateY(-1px);
 }
 
 /* Footer */
@@ -765,11 +910,17 @@ a:hover {
     font-size: 0.65rem;
     padding: 0.15rem 0.25rem;
   }
+  .vtx-summary-card {
+    padding: 1.5rem;
+  }
 }
 
 @media (max-width: 575.98px) {
   .editorial-title-lg {
     font-size: 2.1rem;
+  }
+  .vtx-grand-total-val {
+    font-size: 1.4rem;
   }
   .vtx-calendar-day-cell {
     height: 48px;
@@ -787,3 +938,4 @@ a:hover {
     text-align: center;
   }
 }
+

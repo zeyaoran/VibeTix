@@ -67,3 +67,63 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.order.order_number} - {self.ticket_category.name} x{self.quantity}"
+
+
+class Cart(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='cart'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Shopping Cart'
+        verbose_name_plural = 'Shopping Carts'
+
+    def __str__(self):
+        return f"Cart ({self.user.username})"
+
+    @property
+    def total_items(self):
+        return sum(item.quantity for item in self.items.all())
+
+    @property
+    def subtotal(self):
+        return sum(item.subtotal for item in self.items.all())
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(
+        Cart,
+        on_delete=models.CASCADE,
+        related_name='items'
+    )
+    ticket_category = models.ForeignKey(
+        TicketCategory,
+        on_delete=models.CASCADE,
+        related_name='cart_items'
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Cart Item'
+        verbose_name_plural = 'Cart Items'
+        constraints = [
+            models.UniqueConstraint(fields=['cart', 'ticket_category'], name='unique_cart_ticket_category')
+        ]
+
+    def __str__(self):
+        return f"{self.cart.user.username} - {self.ticket_category.name} x{self.quantity}"
+
+    @property
+    def unit_price(self):
+        return self.ticket_category.price
+
+    @property
+    def subtotal(self):
+        return self.ticket_category.price * self.quantity
+

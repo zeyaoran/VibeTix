@@ -15,7 +15,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-vibetix-key-2026'
 
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if host.strip()]
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,testserver,*').split(',') if host.strip()]
+if DEBUG and 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
+
 
 # Application definition
 

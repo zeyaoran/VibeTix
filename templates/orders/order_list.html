@@ -38,66 +38,108 @@
     </div>
 
     {% if orders %}
-        <div class="d-flex flex-column gap-3">
+        <!-- Desktop Table Header -->
+        <div class="d-none d-lg-grid vtx-order-table-header mb-2" style="grid-template-columns: 2fr 3fr 1.5fr 1.5fr 1.5fr 1fr;">
+            <div>ORDER REF</div>
+            <div>EVENT & PASSES</div>
+            <div>DATE PLACED</div>
+            <div>TOTAL AMOUNT</div>
+            <div>STATUS</div>
+            <div class="text-end">ACTION</div>
+        </div>
+
+        <div class="d-flex flex-column gap-2 mb-4">
             {% for order in orders %}
-                <div class="p-4" style="background-color: var(--vtx-surface); border: var(--vtx-border-hairline); border-radius: var(--radius-sm);">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
+                <div class="vtx-order-row-item">
+                    <div class="d-none d-lg-grid align-items-center" style="grid-template-columns: 2fr 3fr 1.5fr 1.5fr 1.5fr 1fr;">
                         <div>
-                            <span class="subheading" style="color: var(--vtx-accent); font-size: 0.72rem;">
-                                Order Ref: {{ order.order_number }}
-                            </span>
-                            <div class="text-secondary small font-sans mt-1">
-                                Placed on {{ order.created_at|date:"d M Y · H:i" }} WIB
+                            <div class="fw-bold text-white font-monospace" style="font-size: 0.9rem;">
+                                {{ order.order_number }}
+                            </div>
+                            <div class="text-secondary small font-sans mt-1" style="font-size: 0.75rem;">
+                                {{ order.items.count }} ticket tier(s)
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center gap-3">
+                        <div>
+                            {% with first_item=order.items.first %}
+                                {% if first_item %}
+                                    <div class="fw-bold text-white font-sans" style="font-size: 0.95rem;">
+                                        {{ first_item.ticket_category.event.title }}
+                                    </div>
+                                    <div class="text-secondary small font-sans" style="font-size: 0.78rem;">
+                                        {{ first_item.ticket_category.name }} &times; {{ first_item.quantity }}
+                                        {% if order.items.count > 1 %}&bull; +{{ order.items.count|add:"-1" }} more{% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+
+                        <div class="text-secondary small font-sans">
+                            {{ order.created_at|date:"d M Y" }}<br>
+                            <span style="font-size: 0.75rem;">{{ order.created_at|date:"H:i" }} WIB</span>
+                        </div>
+
+                        <div>
+                            <div class="fw-bold text-white font-sans" style="font-size: 1rem;">
+                                Rp {{ order.grand_total|floatformat:"0" }}
+                            </div>
+                        </div>
+
+                        <div>
                             {% if order.status == 'PAID' %}
-                                <span class="badge-status badge-status-on-sale"><i class="bi bi-check2-circle me-1"></i> Paid Successfully</span>
+                                <span class="badge-status badge-status-on-sale"><i class="bi bi-check2-circle me-1"></i> Paid</span>
                             {% elif order.status == 'PENDING' %}
-                                <span class="badge-status" style="background: rgba(245,158,11,0.15); color: #fbbf24;"><i class="bi bi-hourglass-split me-1"></i> Pending Payment</span>
+                                <span class="badge-status" style="background: rgba(245,158,11,0.15); color: #fbbf24;"><i class="bi bi-hourglass-split me-1"></i> Pending</span>
                             {% else %}
                                 <span class="badge-status badge-status-sold-out">{{ order.get_status_display }}</span>
                             {% endif %}
-                            <a href="{% url 'orders:detail' order_number=order.order_number %}" class="btn btn-vtx-outline py-1 px-3 small">
-                                Receipt <i class="bi bi-arrow-right ms-1"></i>
+                        </div>
+
+                        <div class="text-end">
+                            <a href="{% url 'orders:detail' order_number=order.order_number %}" class="btn btn-vtx-outline py-1 px-3 small font-sans" style="font-size: 0.78rem;">
+                                View Receipt &rarr;
                             </a>
                         </div>
                     </div>
 
-                    <!-- Items Summary -->
-                    <div class="py-3">
-                        {% for item in order.items.all %}
-                            <div class="d-flex justify-content-between align-items-center py-2">
-                                <div>
-                                    <h5 class="fw-bold mb-1 font-sans text-white" style="font-size: 1rem;">
-                                        {{ item.ticket_category.event.title }}
-                                    </h5>
-                                    <div class="text-secondary small font-sans">
-                                        <i class="bi bi-ticket-detailed me-1"></i> {{ item.ticket_category.name }} &times; {{ item.quantity }}
-                                        &bull; {{ item.ticket_category.event.venue.name }}
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <div class="fw-bold text-white font-sans">
-                                        Rp {{ item.subtotal|floatformat:"0" }}
-                                    </div>
-                                    <div class="text-secondary small">Rp {{ item.unit_price|floatformat:"0" }} each</div>
-                                </div>
+                    <!-- Mobile Fallback Card Layout -->
+                    <div class="d-lg-none">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="fw-bold text-white font-monospace" style="font-size: 0.85rem;">
+                                {{ order.order_number }}
                             </div>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Footer Total -->
-                    <div class="pt-3 border-top d-flex justify-content-between align-items-center" style="border-color: rgba(255,255,255,0.08) !important;">
-                        <div class="text-secondary small">
-                            {% if order.paid_at %}
-                                <i class="bi bi-clock-history me-1 text-success"></i> Settled on {{ order.paid_at|date:"d M Y · H:i" }} WIB
+                            {% if order.status == 'PAID' %}
+                                <span class="badge-status badge-status-on-sale"><i class="bi bi-check2-circle me-1"></i> Paid</span>
+                            {% elif order.status == 'PENDING' %}
+                                <span class="badge-status" style="background: rgba(245,158,11,0.15); color: #fbbf24;"><i class="bi bi-hourglass-split me-1"></i> Pending</span>
+                            {% else %}
+                                <span class="badge-status badge-status-sold-out">{{ order.get_status_display }}</span>
                             {% endif %}
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="subheading text-secondary mb-0">Grand Total:</span>
-                            <span class="fs-5 fw-bold text-white font-sans">Rp {{ order.grand_total|floatformat:"0" }}</span>
+
+                        {% with first_item=order.items.first %}
+                            {% if first_item %}
+                                <div class="fw-bold text-white font-sans mb-1" style="font-size: 0.95rem;">
+                                    {{ first_item.ticket_category.event.title }}
+                                </div>
+                                <div class="text-secondary small font-sans mb-2">
+                                    {{ first_item.ticket_category.name }} &times; {{ first_item.quantity }}
+                                    &bull; {{ order.created_at|date:"d M Y" }}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
+                            <div>
+                                <span class="subheading text-secondary" style="font-size: 0.65rem;">TOTAL</span>
+                                <div class="fw-bold text-white font-sans" style="font-size: 1.05rem;">
+                                    Rp {{ order.grand_total|floatformat:"0" }}
+                                </div>
+                            </div>
+                            <a href="{% url 'orders:detail' order_number=order.order_number %}" class="btn btn-vtx-primary py-1 px-3 small font-sans">
+                                View Receipt &rarr;
+                            </a>
                         </div>
                     </div>
                 </div>

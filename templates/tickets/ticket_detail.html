@@ -7,63 +7,85 @@
 <div class="container py-5 my-md-4">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="vtx-ticket-stub shadow-lg">
-                <!-- Header -->
-                <div class="vtx-ticket-header p-4 text-center">
-                    <a class="vtx-brand mb-2 d-inline-block text-white" href="{% url 'core:home' %}">
-                        <span>VIBETIX<span class="vtx-brand-dot"></span></span>
-                    </a>
-                    <div class="subheading" style="color: var(--vtx-accent); font-size: 0.8rem;">
-                        Official Digital Concert Pass
+            <div class="vtx-ticket-stub shadow-lg" style="border: var(--vtx-border-subtle); background-color: var(--vtx-surface);">
+                <!-- Event Banner Image on Top of Pass -->
+                <div class="position-relative" style="height: 180px; overflow: hidden; background-color: #0c0e14;">
+                    {% if ticket.category.event.banner_image %}
+                        <img src="{{ ticket.category.event.banner_image.url }}" alt="{{ ticket.category.event.title }}" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.65);">
+                    {% elif ticket.category.event.thumbnail_image %}
+                        <img src="{{ ticket.category.event.thumbnail_image.url }}" alt="{{ ticket.category.event.title }}" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.65);">
+                    {% else %}
+                        <div class="w-100 h-100" style="background: radial-gradient(circle at 50% 30%, rgba(244,63,94,0.2), #090a0d 80%);"></div>
+                    {% endif %}
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to top, var(--vtx-surface) 10%, transparent 70%);"></div>
+                    <div class="position-absolute top-0 start-0 p-3">
+                        <a class="vtx-brand text-white" href="{% url 'core:home' %}">
+                            <span>VIBETIX<span class="vtx-brand-dot"></span></span>
+                        </a>
+                    </div>
+                    <div class="position-absolute top-0 end-0 p-3">
+                        {% if ticket.status == 'ISSUED' %}
+                            <span class="badge-status badge-status-on-sale"><i class="bi bi-shield-check me-1"></i> Official Pass</span>
+                        {% else %}
+                            <span class="badge-status badge-status-published">{{ ticket.get_status_display }}</span>
+                        {% endif %}
                     </div>
                 </div>
 
-                <!-- Stub Body -->
-                <div class="vtx-ticket-body p-4 p-md-5">
-                    <div class="text-center mb-4">
-                        <span class="badge-status badge-status-on-sale mb-2">
-                            <i class="bi bi-shield-fill-check me-1"></i> Verified Authentic Pass
-                        </span>
-                        <h2 class="editorial-heading fs-3 mb-2">{{ ticket.category.event.title }}</h2>
-                        <div class="text-secondary small font-sans">
-                            <i class="bi bi-geo-alt me-1 text-danger"></i> {{ ticket.category.event.venue.name }}, {{ ticket.category.event.venue.city }}
-                        </div>
+                <!-- Pass Header -->
+                <div class="vtx-ticket-header p-4 text-center">
+                    <div class="subheading text-secondary mb-1" style="font-size: 0.72rem; letter-spacing: 0.14em;">
+                        OFFICIAL DIGITAL CONCERT PASS
                     </div>
+                    <h2 class="editorial-heading fs-3 mb-1 text-white">{{ ticket.category.event.title }}</h2>
+                    <div class="text-secondary small font-sans">
+                        <i class="bi bi-geo-alt me-1 text-white"></i> {{ ticket.category.event.venue.name }}, {{ ticket.category.event.venue.city }}
+                    </div>
+                </div>
 
+                <!-- Pass Body -->
+                <div class="vtx-ticket-body p-4 p-md-5">
                     <!-- Tier Box -->
                     <div class="p-3 text-center mb-4 rounded" style="background-color: var(--vtx-surface-elevated); border: 1px solid rgba(255,255,255,0.12);">
-                        <div class="subheading text-secondary mb-1">Ticket Tier Category</div>
+                        <div class="subheading text-secondary mb-1" style="font-size: 0.68rem;">TICKET CATEGORY</div>
                         <div class="fs-4 fw-bold text-white font-sans">{{ ticket.category.name }}</div>
-                        <div class="text-secondary small font-sans mt-1">{{ ticket.category.description }}</div>
+                        {% if ticket.category.description %}
+                            <div class="text-secondary small font-sans mt-1">{{ ticket.category.description }}</div>
+                        {% endif %}
                     </div>
 
                     <!-- Key Event Data Matrix -->
                     <div class="row g-3 mb-4 text-center font-sans">
                         <div class="col-6 p-3 border-end" style="border-color: rgba(255,255,255,0.08) !important;">
-                            <div class="text-secondary small">Date</div>
+                            <div class="text-secondary small font-sans">Date</div>
                             <div class="fw-bold text-white">{{ ticket.category.event.start_time|date:"d M Y" }}</div>
                         </div>
                         <div class="col-6 p-3">
-                            <div class="text-secondary small">Showtime</div>
+                            <div class="text-secondary small font-sans">Showtime</div>
                             <div class="fw-bold text-white">{{ ticket.category.event.start_time|date:"H:i" }} WIB</div>
                         </div>
                         <div class="col-6 p-3 border-end border-top" style="border-color: rgba(255,255,255,0.08) !important;">
-                            <div class="text-secondary small">Ticket Holder</div>
+                            <div class="text-secondary small font-sans">Ticket Holder</div>
                             <div class="fw-bold text-white">{{ ticket.holder_name }}</div>
                         </div>
                         <div class="col-6 p-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
-                            <div class="text-secondary small">ID Number</div>
-                            <div class="fw-bold text-white">{{ ticket.holder_id_number|default:"Verified" }}</div>
+                            <div class="text-secondary small font-sans">Status</div>
+                            <div class="fw-bold text-success">{{ ticket.get_status_display }}</div>
                         </div>
                     </div>
 
-                    <!-- Digital Pass Hash / Code -->
+                    <!-- Barcode Visual Component -->
+                    <div class="mb-3">
+                        <div class="vtx-barcode-lines"></div>
+                    </div>
+
+                    <!-- Digital Pass Hash / Code Box -->
                     <div class="p-4 text-center mb-4 rounded" style="background-color: #06070a; border: 1px dashed rgba(255,255,255,0.15);">
-                        <div class="subheading text-secondary mb-2">Unique Ticket Reference</div>
-                        <div class="fs-3 fw-bold text-white font-monospace letter-spacing-wide mb-2">
+                        <div class="subheading text-secondary mb-1" style="font-size: 0.68rem;">UNIQUE PASS REFERENCE</div>
+                        <div class="fs-3 fw-bold text-white font-monospace letter-spacing-wide mb-1">
                             {{ ticket.ticket_code }}
                         </div>
-                        <div class="text-secondary small font-sans" style="font-size: 0.75rem;">
+                        <div class="text-secondary small font-sans" style="font-size: 0.72rem;">
                             Security Hash: {{ ticket.qr_code_hash|truncatechars:28 }}
                         </div>
                     </div>
@@ -82,3 +104,4 @@
     </div>
 </div>
 {% endblock %}
+

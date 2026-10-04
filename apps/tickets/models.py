@@ -70,3 +70,8 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.ticket_code} - {self.holder_name} ({self.category.name})"
+
+    @property
+    def ticket_category(self):
+        return self.category
+

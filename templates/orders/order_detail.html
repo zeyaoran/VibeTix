@@ -11,30 +11,30 @@
                 <!-- Header -->
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pb-4 border-bottom gap-3" style="border-color: rgba(255,255,255,0.08) !important;">
                     <div>
-                        <a class="vtx-brand mb-1 d-inline-block text-white" href="{% url 'core:home' %}">
-                            <span>VIBETIX<span class="vtx-brand-dot"></span></span>
-                        </a>
-                        <div class="subheading text-secondary" style="font-size: 0.72rem;">
-                            Order Reference: {{ order.order_number }}
+                        <div class="subheading text-secondary mb-1">
+                            {% if order.status == 'PAID' %}ORDER CONFIRMED{% else %}ORDER RESERVED{% endif %}
                         </div>
+                        <h1 class="editorial-heading fs-3 mb-0 text-white font-monospace letter-spacing-wide">
+                            {{ order.order_number }}
+                        </h1>
                     </div>
 
                     <div class="text-md-end">
                         {% if order.status == 'PAID' %}
                             <span class="badge-status badge-status-on-sale"><i class="bi bi-check2-circle me-1"></i> Paid Successfully</span>
                         {% elif order.status == 'PENDING' %}
-                            <span class="badge-status" style="background: rgba(245,158,11,0.15); color: #fbbf24;"><i class="bi bi-hourglass-split me-1"></i> Pending Payment</span>
+                            <span class="badge-status" style="background: rgba(245,158,11,0.15); color: #fbbf24;"><i class="bi bi-hourglass-split me-1"></i> Payment Pending</span>
                         {% else %}
                             <span class="badge-status badge-status-sold-out">{{ order.get_status_display }}</span>
                         {% endif %}
                         <div class="text-secondary small font-sans mt-1">
-                            {{ order.created_at|date:"d M Y · H:i" }} WIB
+                            Placed on {{ order.created_at|date:"d M Y · H:i" }} WIB
                         </div>
                     </div>
                 </div>
 
                 <!-- Customer Info -->
-                <div class="row g-3 py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
+                <div class="row g-3 py-4 border-bottom font-sans" style="border-color: rgba(255,255,255,0.08) !important;">
                     <div class="col-sm-6">
                         <div class="subheading text-secondary mb-1">Billed To</div>
                         <div class="fw-bold text-white font-sans">{{ order.user.get_full_name|default:order.user.username }}</div>
@@ -44,17 +44,23 @@
                         {% endif %}
                     </div>
                     <div class="col-sm-6 text-sm-end">
-                        <div class="subheading text-secondary mb-1">Payment Details</div>
-                        <div class="text-white font-sans small">Category Concert Ticketing</div>
+                        <div class="subheading text-secondary mb-1">Payment Status</div>
+                        <div class="text-white font-sans small">
+                            {% if order.status == 'PAID' %}
+                                <span class="text-success fw-semibold"><i class="bi bi-check-circle me-1"></i> Paid & Settled</span>
+                            {% else %}
+                                <span class="text-warning"><i class="bi bi-clock-history me-1"></i> Awaiting Payment Gateway</span>
+                            {% endif %}
+                        </div>
                         {% if order.paid_at %}
-                            <div class="text-success small"><i class="bi bi-calendar-check me-1"></i> Paid on {{ order.paid_at|date:"d M Y · H:i" }} WIB</div>
+                            <div class="text-secondary small mt-1">Settled on {{ order.paid_at|date:"d M Y · H:i" }} WIB</div>
                         {% endif %}
                     </div>
                 </div>
 
                 <!-- Itemized Breakdown -->
                 <div class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
-                    <h5 class="subheading text-white mb-3">Itemized Concert Passes</h5>
+                    <div class="subheading text-white mb-3">Itemized Concert Passes</div>
                     <div class="d-flex flex-column gap-3">
                         {% for item in items %}
                             <div class="p-3 rounded" style="background-color: var(--vtx-surface-elevated); border: var(--vtx-border-hairline);">
@@ -69,12 +75,15 @@
                                             <span class="text-white fw-semibold">{{ item.ticket_category.name }}</span>
                                             &bull; {{ item.ticket_category.event.venue.name }}, {{ item.ticket_category.event.venue.city }}
                                         </div>
+                                        <div class="text-secondary small font-sans mt-1">
+                                            <i class="bi bi-calendar-event me-1"></i> {{ item.ticket_category.event.start_time|date:"d M Y · H:i" }} WIB
+                                        </div>
                                     </div>
                                     <div class="text-end">
                                         <div class="fw-bold text-white font-sans">
                                             Rp {{ item.subtotal|floatformat:"0" }}
                                         </div>
-                                        <div class="text-secondary small">
+                                        <div class="text-secondary small font-sans">
                                             {{ item.quantity }} &times; Rp {{ item.unit_price|floatformat:"0" }}
                                         </div>
                                     </div>
@@ -111,7 +120,7 @@
                                 <span class="text-white">Rp {{ order.admin_fee|floatformat:"0" }}</span>
                             </div>
                             <div class="d-flex justify-content-between text-secondary small py-1">
-                                <span>Government Entertainment Tax (10%)</span>
+                                <span>Entertainment Tax (10%)</span>
                                 <span class="text-white">Rp {{ order.tax_amount|floatformat:"0" }}</span>
                             </div>
                             <div class="d-flex justify-content-between fs-5 fw-bold text-white pt-3 border-top mt-2" style="border-color: rgba(255,255,255,0.12) !important;">
@@ -122,14 +131,40 @@
                     </div>
                 </div>
 
+                <!-- Payment Status Notice & Phase 4 Gateway Info -->
+                {% if order.status == 'PENDING' %}
+                    <div class="p-4 my-4 rounded" style="background-color: var(--vtx-surface-elevated); border: 1px dashed rgba(255, 255, 255, 0.15);">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-hourglass-split text-secondary fs-4"></i>
+                            <h5 class="fw-bold text-white mb-0 font-sans" style="font-size: 1rem;">Payment Pending — Midtrans Gateway</h5>
+                        </div>
+                        <p class="text-secondary small font-sans mb-3">
+                            Midtrans payment gateway will be integrated in Phase 4. Quota has been securely reserved for your transaction.
+                            {% if order.expires_at %}
+                                <br><span class="text-white fw-semibold"><i class="bi bi-clock me-1"></i> Order reservation expires at: {{ order.expires_at|date:"d M Y · H:i" }} WIB</span>
+                            {% endif %}
+                        </p>
+
+                        <!-- Phase 3 Verification & Testing Simulation -->
+                        <form method="post" action="{% url 'orders:simulate_payment' order_number=order.order_number %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-vtx-accent py-2 px-3 small">
+                                <i class="bi bi-check-circle me-1"></i> Simulate Test Payment (Generate Tickets)
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+
                 <!-- Footer Actions -->
                 <div class="d-flex justify-content-between align-items-center pt-4">
                     <a href="{% url 'orders:list' %}" class="btn btn-vtx-outline py-2 px-3 small">
                         <i class="bi bi-arrow-left me-1"></i> Back to Orders
                     </a>
-                    <a href="{% url 'tickets:my_tickets' %}" class="btn btn-vtx-primary py-2 px-4 small">
-                        View My Tickets <i class="bi bi-ticket-perforated ms-1"></i>
-                    </a>
+                    {% if order.status == 'PAID' %}
+                        <a href="{% url 'tickets:my_tickets' %}" class="btn btn-vtx-primary py-2 px-4 small">
+                            View My Tickets <i class="bi bi-ticket-perforated ms-1"></i>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

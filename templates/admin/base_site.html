@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block branding %}
+<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+    <h1 id="site-name" style="margin: 0;">
+        <a href="{% url 'admin:index' %}" style="color: #fff; font-weight: bold; text-decoration: none; font-size: 1.25rem; letter-spacing: 0.05em;">
+            VIBETIX <span style="color: #f43f5e;">ADMIN</span>
+        </a>
+    </h1>
+    <div style="margin-left: auto; padding-right: 20px;">
+        <a href="{% url 'core:home' %}" class="button" style="background: #f43f5e; color: #ffffff; padding: 6px 14px; border-radius: 4px; font-weight: 600; text-decoration: none; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+            Visit Website &rarr;
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block userlinks %}
+    <a href="{% url 'core:home' %}" style="font-weight: 600; color: #f43f5e; margin-right: 12px;">Visit Website</a> /
+    {{ block.super }}
+{% endblock %}

@@ -147,4 +147,51 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Luxury Quantity Stepper Handler [ - ] [ Qty ] [ + ]
+    document.querySelectorAll('.vtx-qty-stepper').forEach(stepper => {
+        const minusBtn = stepper.querySelector('.js-qty-minus');
+        const plusBtn = stepper.querySelector('.js-qty-plus');
+        const input = stepper.querySelector('.vtx-qty-input');
+
+        if (!input) return;
+
+        const updateBtnStates = () => {
+            const val = parseInt(input.value, 10) || 1;
+            const min = parseInt(input.min, 10) || 1;
+            const max = parseInt(input.max, 10) || 10;
+            if (minusBtn) minusBtn.disabled = val <= min;
+            if (plusBtn) plusBtn.disabled = val >= max;
+        };
+
+        if (minusBtn) {
+            minusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                let val = parseInt(input.value, 10) || 1;
+                const min = parseInt(input.min, 10) || 1;
+                if (val > min) {
+                    input.value = val - 1;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                updateBtnStates();
+            });
+        }
+
+        if (plusBtn) {
+            plusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                let val = parseInt(input.value, 10) || 1;
+                const max = parseInt(input.max, 10) || 10;
+                if (val < max) {
+                    input.value = val + 1;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                updateBtnStates();
+            });
+        }
+
+        input.addEventListener('input', updateBtnStates);
+        updateBtnStates();
+    });
 });
+
